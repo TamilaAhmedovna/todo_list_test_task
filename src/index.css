@@ -10,15 +10,16 @@
 }
 
 .todos {
+  margin-bottom: 20px;
   display: flex;
   flex-direction: row;
 }
 
 .todo {
-  margin-right: 20px;
   border: 1px solid;
   padding: 10px;
   width: 220px;
+  background-color: aliceblue;
 }
 
 .todo-controls {
@@ -31,17 +32,26 @@
 .task {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 6px;
   padding: 4px;
   border: 1px dashed;
-  background-color: cornsilk;
+  background-color: white;
 }
 
 .task.completed {
-  background-color: #7dce2fbf;
+  /* background-color: #7dce2f7d; */
 }
 
-.task-controls {
+.task.selected {
+  border: 3px solid;
+  border-color: darkgreen;
+}
 
+.task-name {
+  width: 60%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-align: left;
 }
 
 .icon {

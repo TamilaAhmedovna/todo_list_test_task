@@ -1,11 +1,11 @@
 
 export type TodoType = {
-  id: number
+  id: string
   name: string
 }
 
 export type TaskType = {
-  id: number
+  id: string
   name: string
   isCompleted: boolean
 }

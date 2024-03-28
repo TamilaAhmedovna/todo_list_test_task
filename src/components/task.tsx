@@ -1,29 +1,37 @@
 import { TrashIcon } from "@heroicons/react/24/outline"
-import ItemCreation from "./itemCreation"
-import Tasks from "./tasks"
-import { useState } from "react"
-import { TaskType } from "../models/models"
+import { ChangeEvent } from "react"
 
 type PropsType = {
-  id: number
+  id: string
   name: string
   isCompleted: boolean
-  onRemoveTask: (id: number) => void
-  onCompleteChanged: (id: number, isCompleted: boolean) => void
+  onRemoveTask: (id: string) => void
+  onCompleteChanged: (id: string, isCompleted: boolean, e: ChangeEvent<HTMLInputElement>) => void
+  isSelected: boolean
 }
 
-function Todo(props: PropsType) {
-  const { id, name, isCompleted, onRemoveTask, onCompleteChanged } = props
+function Task(props: PropsType) {
+  const { id, name, isCompleted, onRemoveTask, onCompleteChanged, isSelected } = props
 
+  console.log(name, isCompleted)
   return (
-    <div className={`task ${isCompleted ? 'completed' : ''}`}>
-      {name}
+    <div 
+      className={`
+        task 
+        ${isCompleted ? 'completed' : ''}
+        ${isSelected ? 'selected' : ''}
+      `}
+    >
+      <div className='task-name'>{name}</div>
       <div className='task-controls'>
         <label>
           <input
             checked={isCompleted}
             type='checkbox'
-            onChange={(e) => onCompleteChanged(id, e.target.checked)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              onCompleteChanged(id, e.target.checked, e)
+            }}
+            onClick={(e) => e.stopPropagation()}
           />
           Done
         </label>
@@ -33,4 +41,4 @@ function Todo(props: PropsType) {
   )
 }
 
-export default Todo
+export default Task

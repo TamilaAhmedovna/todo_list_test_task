@@ -1,13 +1,15 @@
+import { ChangeEvent, useState } from "react"
+import lodash from 'lodash'
 import { TrashIcon } from "@heroicons/react/24/outline"
+
+import { TaskType } from "../models/models"
 import ItemCreation from "./itemCreation"
 import Tasks from "./tasks"
-import { useState } from "react"
-import { TaskType } from "../models/models"
 
 type PropsType = {
-  id: number
+  id: string
   name: string
-  onRemoveTodo: (id: number) => void
+  onRemoveTodo: (id: string) => void
 }
 
 function Todo(props: PropsType) {
@@ -15,15 +17,23 @@ function Todo(props: PropsType) {
   const [tasks, setTasks] = useState<TaskType[]>([])
 
   const addTask = (name: string) => {
-    setTasks((tasks: TaskType[]) => [...tasks, { id: tasks.length + 1, name, isCompleted: false }])
+    setTasks((tasks: TaskType[]) => [
+      ...tasks, 
+      { 
+        id: lodash.uniqueId('task'), 
+        name, 
+        isCompleted: false 
+      }
+    ])
   }
 
-  const removeTask = (id: number) => {
+  const removeTask = (id: string) => {
     setTasks((tasks: TaskType[]) => tasks.filter(i => i.id !== id))
   }
 
-  const completeChanged = (id: number, isCompleted: boolean) => {
-    setTasks((tasks: TaskType[]) => tasks.map(i => (i.id === id) ? {...i, isCompleted} : i))
+  const completeChanged = (id: string, isCompleted: boolean, e: ChangeEvent<HTMLInputElement>) => {
+    setTasks((tasks: TaskType[]) => 
+      tasks.map(i => (i.id === id) ? {...i, isCompleted} : i))
   }
 
   return (
@@ -37,6 +47,8 @@ function Todo(props: PropsType) {
         tasks={tasks} 
         onRemoveTask={removeTask}
         onCompleteChanged={completeChanged}
+        onUpdateTasks={setTasks}
+        todoId={id}
       />
     </div>
   )
