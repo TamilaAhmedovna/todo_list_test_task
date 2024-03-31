@@ -13,7 +13,6 @@ type PropsType = {
 function Task(props: PropsType) {
   const { id, name, isCompleted, onRemoveTask, onCompleteChanged, isSelected } = props
 
-  console.log(name, isCompleted)
   return (
     <div 
       className={`

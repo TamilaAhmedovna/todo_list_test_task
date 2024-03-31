@@ -5,7 +5,7 @@ export type PropsType = {
   onAddItem: (name: string) => void
 }
 
-function ItemCreation(props: PropsType) {
+function EntityCreation(props: PropsType) {
   const [name, setName] = useState('')
 
   const handleAddItem = () => {
@@ -35,4 +35,4 @@ function ItemCreation(props: PropsType) {
   )
 }
 
-export default ItemCreation
+export default EntityCreation

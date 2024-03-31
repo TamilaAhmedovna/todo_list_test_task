@@ -9,24 +9,39 @@
   margin-bottom: 20px;
 }
 
-.todos {
-  margin-bottom: 20px;
+.columns {
+  margin-bottom: 10px;
+  padding-bottom: 20px ;
   display: flex;
   flex-direction: row;
+  overflow-x: auto;
 }
 
-.todo {
+.column {
   border: 1px solid;
   padding: 10px;
   width: 220px;
   background-color: aliceblue;
 }
 
-.todo-controls {
+.column-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.column-name {
+  width: 40%;
+  text-overflow: ellipsis;
+  text-align: left;
+  overflow-x: hidden;
+}
+
+.column-controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
 }
 
 .task {
@@ -36,10 +51,6 @@
   padding: 4px;
   border: 1px dashed;
   background-color: white;
-}
-
-.task.completed {
-  /* background-color: #7dce2f7d; */
 }
 
 .task.selected {

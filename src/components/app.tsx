@@ -1,39 +1,28 @@
-import { useState } from 'react'
 import lodash from 'lodash'
+import { useDispatch } from 'react-redux'
 
-import { TodoType } from '../models/models'
-import Todos from './todos'
-import ItemCreation from './itemCreation'
+import Columns from './columns'
+import EntityCreation from './entityCreation'
+import { todoCreated } from '../store/features/todos/todoSlice'
 
 function App() {
-  const [todos, setTodos] = useState<TodoType[]>([])
+  const dispatch = useDispatch()
 
   const addTodo = (name: string) => {
-    setTodos((todos: TodoType[]) => [
-      ...todos, 
-      { 
-        id: lodash.uniqueId('todo-'), 
-        name 
-      }
-    ])
-  }
-
-  const removeTodo = (id: string) => {
-    setTodos((todos: TodoType[]) => todos.filter(i => i.id !== id))
+    dispatch(todoCreated({
+      id: lodash.uniqueId('todo-'),
+      name,
+      tasks: []
+    }))
   }
 
   return (
     <div>
-      <ItemCreation
+      <EntityCreation
         buttonName='Add Todo'
         onAddItem={addTodo}
       />
-      <Todos
-        todos={todos}
-        onRemoveTodo={removeTodo}
-        onUpdateTodos={setTodos}
-      />
-      <i>Multi select: Ctrl/Shift + Left Click</i>
+      <Columns />
     </div>
   )
 }
