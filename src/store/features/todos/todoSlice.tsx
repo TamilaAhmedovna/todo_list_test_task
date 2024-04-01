@@ -17,7 +17,7 @@ export const todosSlice = createSlice({
         todoDeleted: (state, action) => {
             return state.filter(todo => (todo.id !== action.payload))
         },
-        todosOrderUpdated: (state, action) => {
+        todosOrderUpdated: (_state, action) => {
             return action.payload
         },
         taskCreated: (state, action) => {
