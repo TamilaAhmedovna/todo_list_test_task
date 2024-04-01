@@ -1,9 +1,10 @@
+import { useState } from "react"
 import { useDispatch } from "react-redux"
 import lodash from 'lodash'
 
 import { TaskType } from "../models/models"
 import EntityCreation from "./entityCreation"
-import Tasks from "./rows"
+import Tasks from "./tasks"
 import {
   taskCompleteUpdated,
   taskCreated,
@@ -11,7 +12,6 @@ import {
   tasksOrderUpdated,
   todoDeleted
 } from "../store/features/todos/todoSlice"
-import { useState } from "react"
 import ColumnHeader from "./columnHeader"
 
 type PropsType = {
@@ -21,16 +21,17 @@ type PropsType = {
 }
 
 function Column(props: PropsType) {
-  const { id, name, tasks, ...rest } = props
+  const { id, name, tasks, ...dndProps } = props
   const dispatch = useDispatch()
-
   const [filteredTasks, setFilteredTasks] = useState<TaskType[]>(tasks)
+  const [searchValue, setSearchValue] = useState<string>('')
 
   const handleRemoveColumn = () => {
     dispatch(todoDeleted(id))
   }
 
   const addTask = (name: string) => {
+    setSearchValue('')
     dispatch(taskCreated({
       columnId: id,
       task: {
@@ -60,11 +61,12 @@ function Column(props: PropsType) {
         tasks={tasks}
         onRemoveColumn={handleRemoveColumn}
         onUpdateFilteredTasks={setFilteredTasks}
-        {...rest}
+        {...dndProps}
       />
       <EntityCreation
         buttonName='Add Task'
         onAddItem={addTask}
+        onSetName={setSearchValue}
       />
       <Tasks
         tasks={filteredTasks}
@@ -72,6 +74,7 @@ function Column(props: PropsType) {
         onCompleteChanged={completeChanged}
         onUpdateTasks={updateTasksOrder}
         columnId={id}
+        searchValue={searchValue}
       />
     </div>
   )

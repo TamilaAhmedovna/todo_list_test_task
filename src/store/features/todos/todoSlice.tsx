@@ -41,7 +41,7 @@ export const todosSlice = createSlice({
         },
         tasksOrderUpdated: (state, action) => {
             return state.map(todo => {
-                if (todo.id !== action.payload.todoId) return todo
+                if (todo.id !== action.payload.columnId) return todo
 
                 return {
                     ...todo,

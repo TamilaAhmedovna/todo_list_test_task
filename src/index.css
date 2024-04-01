@@ -60,7 +60,7 @@
 
 .task-name {
   width: 60%;
-  text-overflow: ellipsis;
+  word-break: break-all;
   overflow: hidden;
   text-align: left;
 }
@@ -68,4 +68,8 @@
 .icon {
   height: 16px;
   cursor: pointer;
+}
+
+.highlighted {
+  background-color: yellowgreen;
 }

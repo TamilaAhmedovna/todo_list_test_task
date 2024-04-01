@@ -1,38 +1,34 @@
 import { useDispatch, useSelector } from 'react-redux'
 import lodash from 'lodash'
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
+import { 
+  DragDropContext, 
+  Draggable, 
+  DropResult, 
+  Droppable
+} from 'react-beautiful-dnd'
 
 import Column from './column'
 import { selectTodos, todosOrderUpdated } from '../store/features/todos/todoSlice'
 import { ColumnType } from '../models/models'
-import { reorder } from '../services/dnd/dnd-utils'
+import { reorder } from '../helpers/dnd'
 
 function Columns() {
   const dispatch = useDispatch()
   const todos = useSelector(selectTodos)
 
-  const onDragEnd = (result: any) => {
-    console.log(result)
-    // dropped outside the list
-    if (!result.destination) {
-      return;
-    }
+  const onDragEnd = (result: DropResult) => {
+    const { source, destination } = result;
+    
+    if (!destination) return
 
     const items = reorder(
       todos,
-      result.source.index,
-      result.destination.index
+      source.index,
+      destination.index
     );
 
     dispatch(todosOrderUpdated(items))
   }
-
-  const getItemStyle = (isDragging: any, draggableStyle: any) => ({
-    userSelect: 'none',
-    marginRight: '10px',
-
-    ...draggableStyle,
-  });
 
   const renderColumn = (column: ColumnType, index: number) => (
     <Draggable
@@ -40,16 +36,21 @@ function Columns() {
       draggableId={`${column.id}`}
       index={index}
     >
-      {(provided, snapshot) => (
+      {(provided) => (
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
-          style={getItemStyle(
-            snapshot.isDragging,
-            provided.draggableProps.style
-          )}
+          style={{
+            userSelect: 'none',
+            marginRight: '10px',
+        
+            ...provided.draggableProps.style,
+          }}
         >
-          <Column {...column} {...provided.dragHandleProps} />
+          <Column 
+            {...column} 
+            {...provided.dragHandleProps}
+          />
         </div>
       )}
     </Draggable>
@@ -58,7 +59,6 @@ function Columns() {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable
-        type="COLUMN"
         droppableId={lodash.uniqueId()}
         direction="horizontal"
       >

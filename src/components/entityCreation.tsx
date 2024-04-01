@@ -1,17 +1,34 @@
-import { useState } from "react"
+import { useState, KeyboardEvent, ChangeEvent } from "react"
 
 export type PropsType = {
   buttonName: string
   onAddItem: (name: string) => void
+  onSetName?: (value: string) => void
 }
 
 function EntityCreation(props: PropsType) {
+  const { buttonName, onAddItem, onSetName } = props
   const [name, setName] = useState('')
 
   const handleAddItem = () => {
     if (!name.length) return
     setName('')
-    props.onAddItem(name)
+    onAddItem(name)
+  }
+
+  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.currentTarget
+
+    setName(value)
+    if (onSetName) {
+      onSetName(value)
+    }
+  }
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== "Enter") return
+
+    handleAddItem();
   }
 
   return (
@@ -19,17 +36,14 @@ function EntityCreation(props: PropsType) {
       <input
         value={name}
         placeholder='Type name'
-        onChange={(e) => setName(e.currentTarget.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter")
-            handleAddItem();
-        }}
+        onChange={handleNameChange}
+        onKeyDown={handleKeyDown}
       />
-      <button 
+      <button
         onClick={handleAddItem}
         disabled={!name.length}
       >
-        {props.buttonName}
+        {buttonName}
       </button>
     </div>
   )

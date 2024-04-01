@@ -2,13 +2,12 @@ import { TrashIcon } from "@heroicons/react/24/outline"
 
 import { TaskType } from "../models/models"
 import { ChangeEvent, useEffect, useState } from "react"
-import { 
-  TaskFilterTypes, 
-  filterAll, 
-  filterCompleted, 
-  filterNotCompleted, 
+import {
+  TaskFilterTypes,
+  filterAll,
   taskFilters
 } from "../models/models"
+import { filterTasks } from "../helpers/filterTasks"
 
 type PropsType = {
   name: string
@@ -18,34 +17,27 @@ type PropsType = {
 }
 
 function ColumnHeader(props: PropsType) {
-  const { name, tasks, onRemoveColumn, onUpdateFilteredTasks, ...rest } = props
+  const { 
+    name, 
+    tasks, 
+    onRemoveColumn, 
+    onUpdateFilteredTasks, 
+    ...dndProps
+  } = props
   const [filter, setFilter] = useState<TaskFilterTypes>(filterAll)
 
   useEffect(() => {
-    onUpdateFilteredTasks(getFilteredTasks(filter))
+    onUpdateFilteredTasks(filterTasks(tasks, filter))
   }, [tasks, filter])
-
-  const getFilteredTasks = (filter: TaskFilterTypes) => (
-    tasks.filter(task => {
-        switch (filter) {
-          case filterAll:
-            return task
-          case filterCompleted:
-            return task.isCompleted
-          case filterNotCompleted:
-            return !task.isCompleted
-        }
-      })
-  )
 
   const handleFilterChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const filterValue = e.target.value as TaskFilterTypes
-    onUpdateFilteredTasks(getFilteredTasks(filterValue))
+    onUpdateFilteredTasks(filterTasks(tasks, filterValue))
     setFilter(filterValue)
   }
 
   return (
-    <div className='column-header' {...rest}>
+    <div className='column-header' {...dndProps}>
       <div className='column-name'>{name}</div>
       <div className='column-controls'>
         <select
