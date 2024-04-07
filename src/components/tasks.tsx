@@ -1,19 +1,25 @@
-import { ChangeEvent } from 'react'
-import { DragDropContext, Draggable, DropResult, Droppable } from 'react-beautiful-dnd'
-import { useDispatch } from 'react-redux';
+import { Draggable, Droppable } from 'react-beautiful-dnd'
 
 import { TaskType } from '../models/models'
 import Task from './task'
-import { reorder } from "../helpers/dnd";
-import { tasksOrderUpdated } from '../store/features/todos/todoSlice';
 
 type PropsType = {
   tasks: TaskType[]
-  onRemoveTask: (id: string) => void
-  onCompleteChanged: (id: string, isCompleted: boolean, e: ChangeEvent<HTMLInputElement>) => void
-  onUpdateTasks: (tasks: TaskType[]) => void
+  onRemoveTask: (
+    id: string,
+    isSelected: boolean
+  ) => void
+  onCompleteChanged: (
+    id: string, 
+    isCompleted: boolean, 
+    isSelected: boolean
+  ) => void
   columnId: string
   searchValue: string
+  onToggleSelectTask: (
+    taskId: string, 
+    multiSelect: boolean
+  ) => void 
 }
 
 function Tasks(props: PropsType) {
@@ -22,69 +28,55 @@ function Tasks(props: PropsType) {
     onRemoveTask,
     onCompleteChanged,
     columnId,
-    searchValue
+    searchValue,
+    onToggleSelectTask
   } = props
-  const dispatch = useDispatch()
-
-  const onDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
-
-    if (!destination) return
-
-    const items = reorder(
-      tasks,
-      source.index,
-      destination.index
-    );
-
-    dispatch(tasksOrderUpdated({ columnId, tasks: items }))
-  }
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable
-        droppableId={columnId}
-        isDropDisabled={false}
-      >
-        {(provided) => (
-          <div
-            className='tasks'
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
-            {tasks.map((task, index) => {
-              const { id, name, isCompleted } = task
-              return (
-                <Draggable
-                  key={id}
-                  draggableId={`${id}`}
-                  index={index}
-                >
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <Task
-                        key={id}
-                        id={id}
-                        name={name}
-                        isCompleted={isCompleted}
-                        onRemoveTask={onRemoveTask}
-                        onCompleteChanged={onCompleteChanged}
-                        searchValue={searchValue}
-                      />
-                    </div>
-                  )}
-                </Draggable>
-              )
-            })}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <Droppable
+      droppableId={columnId}
+      isDropDisabled={false}
+    >
+      {(provided) => (
+        <div
+          className='tasks'
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+        >
+          {tasks.map((task, index) => {
+            const { id, name, isCompleted, isSelected } = task
+            return (
+              <Draggable
+                key={id}
+                draggableId={`${id}`}
+                index={index}
+              >
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  >
+                    <Task
+                      key={id}
+                      id={id}
+                      name={name}
+                      isCompleted={isCompleted}
+                      isSelected={isSelected}
+                      onRemoveTask={onRemoveTask}
+                      onCompleteChanged={onCompleteChanged}
+                      searchValue={searchValue}
+                      onToggleSelectTask={onToggleSelectTask}
+                    />
+                  </div>
+                )}
+              </Draggable>
+            )
+          })}
+          {provided.placeholder}
+        </div>
+      )}
+    </Droppable>
   )
 }
 

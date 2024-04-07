@@ -1,7 +1,13 @@
-import { TaskFilterTypes, TaskType, filterAll, filterCompleted, filterNotCompleted } from "../models/models"
+import { 
+  TaskFilterTypes, 
+  TaskType, 
+  filterAll, 
+  filterCompleted, 
+  filterNotCompleted 
+} from '../models/models'
 
 export const filterTasks = (
-  tasks: TaskType[], 
+  tasks: TaskType[],
   filter: TaskFilterTypes
 ) => (
   tasks.filter(task => {

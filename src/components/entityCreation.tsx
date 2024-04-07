@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent, ChangeEvent } from "react"
+import { useState, KeyboardEvent, ChangeEvent } from 'react'
 
 export type PropsType = {
   buttonName: string
@@ -26,7 +26,7 @@ function EntityCreation(props: PropsType) {
   }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key !== "Enter") return
+    if (e.key !== 'Enter') return
 
     handleAddItem();
   }

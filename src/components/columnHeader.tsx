@@ -1,61 +1,65 @@
-import { TrashIcon } from "@heroicons/react/24/outline"
+import { useEffect, useState } from 'react'
 
-import { TaskType } from "../models/models"
-import { ChangeEvent, useEffect, useState } from "react"
+import { TaskType } from '../models/models'
 import {
   TaskFilterTypes,
   filterAll,
-  taskFilters
-} from "../models/models"
-import { filterTasks } from "../helpers/filterTasks"
+} from '../models/models'
+import { filterTasks } from '../helpers/filterTasks'
+import Filter from './filter'
+import ColumnProps from './columnProps'
+import SelectAll from './selectAll'
 
 type PropsType = {
   name: string
   tasks: TaskType[]
   onUpdateFilteredTasks: (filteredTasks: TaskType[]) => void
   onRemoveColumn: () => void
+  isAllTasksSelected: boolean
+  onSelectAllTasks: (isSelected: boolean) => void
 }
 
 function ColumnHeader(props: PropsType) {
-  const { 
-    name, 
-    tasks, 
-    onRemoveColumn, 
-    onUpdateFilteredTasks, 
+  const {
+    name,
+    tasks,
+    onRemoveColumn,
+    onUpdateFilteredTasks,
+    isAllTasksSelected,
+    onSelectAllTasks,
     ...dndProps
   } = props
   const [filter, setFilter] = useState<TaskFilterTypes>(filterAll)
 
   useEffect(() => {
-    onUpdateFilteredTasks(filterTasks(tasks, filter))
-  }, [tasks, filter])
+        onUpdateFilteredTasks(filterTasks(tasks, filter))
+  }, [tasks])
 
-  const handleFilterChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const filterValue = e.target.value as TaskFilterTypes
-    onUpdateFilteredTasks(filterTasks(tasks, filterValue))
-    setFilter(filterValue)
+  const handleFilterChange = (value: TaskFilterTypes) => {
+    // When applying filter all tasks became unselected
+    const removedSelection = tasks.map(task => ({ ...task, isSelected: false }))
+    
+    onUpdateFilteredTasks(filterTasks(removedSelection, value))
+    setFilter(value)
   }
-
   return (
-    <div className='column-header' {...dndProps}>
-      <div className='column-name'>{name}</div>
-      <div className='column-controls'>
-        <select
-          value={filter}
-          onChange={handleFilterChange}
-        >
-          {taskFilters.map((value) => (
-            <option
-              key={value}
-              value={value}
-            >
-              {value}
-            </option>
-          ))}
-        </select>
-        <TrashIcon
-          className='icon'
-          onClick={onRemoveColumn}
+    <div>
+      <ColumnProps
+        name={name}
+        onRemoveColumn={onRemoveColumn}
+        {...dndProps}
+      />
+      <hr className='column-divider' />
+      <div className='column-task-controls'>
+        <Filter
+          onHandleFilterChange={handleFilterChange}
+          filter={filter}
+          disabled={!tasks.length}
+        />
+        <SelectAll
+          isAllTasksSelected={isAllTasksSelected}
+          onSelectAllTasks={onSelectAllTasks}
+          disabled={!tasks.length}
         />
       </div>
     </div>

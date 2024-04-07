@@ -1,18 +1,19 @@
-import { useState } from "react"
-import { useDispatch } from "react-redux"
+import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import lodash from 'lodash'
 
-import { TaskType } from "../models/models"
-import EntityCreation from "./entityCreation"
-import Tasks from "./tasks"
+import { TaskType } from '../models/models'
+import EntityCreation from './entityCreation'
+import Tasks from './tasks'
 import {
+  allTasksSelected,
   taskCompleteUpdated,
   taskCreated,
   taskDeleted,
-  tasksOrderUpdated,
+  taskSelectionUpdated,
   todoDeleted
-} from "../store/features/todos/todoSlice"
-import ColumnHeader from "./columnHeader"
+} from '../store/features/todos/todoSlice'
+import ColumnHeader from './columnHeader'
 
 type PropsType = {
   id: string
@@ -37,21 +38,26 @@ function Column(props: PropsType) {
       task: {
         id: lodash.uniqueId('task-'),
         name,
-        isCompleted: false
+        isCompleted: false,
+        isSelected: false
       }
     }))
   }
 
-  const removeTask = (taskId: string) => {
-    dispatch(taskDeleted({ todoId: id, taskId }))
+  const removeTask = (taskId: string, isSelected: boolean) => {
+    dispatch(taskDeleted({ columnId: id, taskId, isSelected }))
   }
 
-  const completeChanged = (taskId: string, isCompleted: boolean) => {
-    dispatch(taskCompleteUpdated({ todoId: id, taskId, isCompleted }))
+  const completeChanged = (taskId: string, isCompleted: boolean, isSelected: boolean) => {
+    dispatch(taskCompleteUpdated({ columnId: id, taskId, isCompleted, isSelected }))
   }
 
-  const updateTasksOrder = () => {
-    dispatch(tasksOrderUpdated({ todoId: id, tasks: filteredTasks }))
+  const toggleSelectTask = (taskId: string, multiSelect: boolean) => {
+    dispatch(taskSelectionUpdated({ columnId: id, taskId, multiSelect }))
+  }
+
+  const toggleSelectAllTasks = (isSelected: boolean) => {
+    dispatch(allTasksSelected({ columnId: id, isSelected }))
   }
 
   return (
@@ -61,6 +67,8 @@ function Column(props: PropsType) {
         tasks={tasks}
         onRemoveColumn={handleRemoveColumn}
         onUpdateFilteredTasks={setFilteredTasks}
+        isAllTasksSelected={filteredTasks.every(i => i.isSelected)}
+        onSelectAllTasks={toggleSelectAllTasks}
         {...dndProps}
       />
       <EntityCreation
@@ -72,9 +80,9 @@ function Column(props: PropsType) {
         tasks={filteredTasks}
         onRemoveTask={removeTask}
         onCompleteChanged={completeChanged}
-        onUpdateTasks={updateTasksOrder}
         columnId={id}
         searchValue={searchValue}
+        onToggleSelectTask={toggleSelectTask}
       />
     </div>
   )

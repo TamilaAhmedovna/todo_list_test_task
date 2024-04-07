@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux'
-import lodash from 'lodash'
 import { 
   DragDropContext, 
   Draggable, 
@@ -17,15 +16,9 @@ function Columns() {
   const todos = useSelector(selectTodos)
 
   const onDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
-    
-    if (!destination) return
+    if (!result.destination) return
 
-    const items = reorder(
-      todos,
-      source.index,
-      destination.index
-    );
+    const items = reorder(todos, result);
 
     dispatch(todosOrderUpdated(items))
   }
@@ -59,8 +52,9 @@ function Columns() {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable
-        droppableId={lodash.uniqueId()}
-        direction="horizontal"
+        droppableId='board'
+        type='COLUMN'
+        direction='horizontal'
       >
         {(provided) => (
           <div

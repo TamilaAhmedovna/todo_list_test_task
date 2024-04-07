@@ -31,37 +31,66 @@ export const todosSlice = createSlice({
         },
         taskDeleted: (state, action) => {
             return state.map(todo => {
-                if (todo.id !== action.payload.todoId) return todo
-
-                return {
-                    ...todo,
-                    tasks: todo.tasks.filter(task => (task.id !== action.payload.taskId))
-                }
-            })
-        },
-        tasksOrderUpdated: (state, action) => {
-            return state.map(todo => {
                 if (todo.id !== action.payload.columnId) return todo
 
                 return {
                     ...todo,
-                    tasks: action.payload.tasks
+                    tasks: todo.tasks.filter(task => 
+                        action.payload.isSelected
+                            ? !task.isSelected 
+                            : task.id !== action.payload.taskId
+                    )
                 }
             })
         },
         taskCompleteUpdated: (state, action) => {
             return state.map(todo => {
-                if (todo.id !== action.payload.todoId) return todo
+                if (todo.id !== action.payload.columnId) return todo
 
                 return {
                     ...todo,
-                    tasks: todo.tasks.map(task => (task.id === action.payload.taskId)
-                        ? { ...task, isCompleted: action.payload.isCompleted }
-                        : task
+                    tasks: todo.tasks.map(task =>
+                        action.payload.isSelected
+                            ? task.isSelected
+                                ? { ...task, isCompleted: action.payload.isCompleted }
+                                : task
+                            : (task.id === action.payload.taskId)
+                                ? { ...task, isCompleted: action.payload.isCompleted }
+                                : task
                     )
                 }
             })
         },
+        taskSelectionUpdated: (state, action) => {
+            return state.map(todo => {
+                if (todo.id !== action.payload.columnId) return todo
+
+                return {
+                    ...todo,
+                    tasks: todo.tasks.map(task => {
+                        return {
+                            ...task,
+                            isSelected: (task.id === action.payload.taskId)
+                                ? !task.isSelected
+                                : action.payload.multiSelect ? task.isSelected : false
+                        }
+                    })
+                }
+            })
+        },
+        allTasksSelected: (state, action) => {
+            return state.map(todo => {
+                if (todo.id !== action.payload.columnId) return todo
+
+                return {
+                    ...todo,
+                    tasks: todo.tasks.map(task => ({
+                        ...task,
+                        isSelected: action.payload.isSelected
+                    }))
+                }
+            })
+        }
     }
 })
 
@@ -72,7 +101,8 @@ export const {
     todosOrderUpdated,
     taskCreated,
     taskDeleted,
-    tasksOrderUpdated,
+    taskSelectionUpdated,
+    allTasksSelected,
     taskCompleteUpdated
 } = todosSlice.actions
 

@@ -9,6 +9,7 @@ export type TaskType = {
     id: string
     name: string
     isCompleted: boolean
+    isSelected?: boolean
 }
 
 export type TaskFilterTypes = 'All' | 'Completed' | 'Not completed'
