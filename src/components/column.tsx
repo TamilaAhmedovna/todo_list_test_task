@@ -18,14 +18,17 @@ import ColumnHeader from './columnHeader'
 type PropsType = {
   id: string
   name: string
-  tasks: TaskType[]
+  tasks: TaskType[],
+  draggingTaskId: string
 }
 
 function Column(props: PropsType) {
-  const { id, name, tasks, ...dndProps } = props
+  const { id, name, tasks, draggingTaskId, ...dndProps } = props
   const dispatch = useDispatch()
   const [filteredTasks, setFilteredTasks] = useState<TaskType[]>(tasks)
   const [searchValue, setSearchValue] = useState<string>('')
+  const isAllTasksSelected = filteredTasks.every(i => i.isSelected) 
+    && !!filteredTasks.length
 
   const handleRemoveColumn = () => {
     dispatch(todoDeleted(id))
@@ -57,7 +60,7 @@ function Column(props: PropsType) {
   }
 
   const toggleSelectAllTasks = (isSelected: boolean) => {
-    dispatch(allTasksSelected({ columnId: id, isSelected }))
+    dispatch(allTasksSelected({ columnId: id, isSelected, filteredTasks }))
   }
 
   return (
@@ -67,7 +70,7 @@ function Column(props: PropsType) {
         tasks={tasks}
         onRemoveColumn={handleRemoveColumn}
         onUpdateFilteredTasks={setFilteredTasks}
-        isAllTasksSelected={filteredTasks.every(i => i.isSelected)}
+        isAllTasksSelected={isAllTasksSelected}
         onSelectAllTasks={toggleSelectAllTasks}
         {...dndProps}
       />
@@ -83,6 +86,7 @@ function Column(props: PropsType) {
         columnId={id}
         searchValue={searchValue}
         onToggleSelectTask={toggleSelectTask}
+        draggingTaskId={draggingTaskId}
       />
     </div>
   )

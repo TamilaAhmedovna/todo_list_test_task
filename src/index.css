@@ -21,7 +21,7 @@
 .column {
   border: 1px solid;
   width: 220px;
-  background-color: #edf2ff;
+  background-color: lavender;
 }
 
 .column-props {
@@ -74,6 +74,7 @@
 
 .tasks {
   margin: 0 10px;
+  min-height: 20px;
 }
 
 .task {
@@ -83,6 +84,15 @@
   padding: 4px;
   border: 1px dashed;
   background-color: #c7f8c7;
+}
+
+.task-ghosting {
+  opacity: 0.5;
+}
+
+.task-completion,
+.task-completion > input {
+  cursor: pointer;
 }
 
 .task.completed {

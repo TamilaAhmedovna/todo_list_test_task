@@ -19,7 +19,8 @@ type PropsType = {
   onToggleSelectTask: (
     taskId: string, 
     multiSelect: boolean
-  ) => void 
+  ) => void
+  draggingTaskId: string
 }
 
 function Tasks(props: PropsType) {
@@ -29,14 +30,12 @@ function Tasks(props: PropsType) {
     onCompleteChanged,
     columnId,
     searchValue,
-    onToggleSelectTask
+    onToggleSelectTask,
+    draggingTaskId
   } = props
 
   return (
-    <Droppable
-      droppableId={columnId}
-      isDropDisabled={false}
-    >
+    <Droppable droppableId={columnId}>
       {(provided) => (
         <div
           className='tasks'
@@ -45,17 +44,23 @@ function Tasks(props: PropsType) {
         >
           {tasks.map((task, index) => {
             const { id, name, isCompleted, isSelected } = task
+            const isGhosting = isSelected && 
+              Boolean(draggingTaskId) && 
+              draggingTaskId !== id
+
             return (
               <Draggable
                 key={id}
                 draggableId={`${id}`}
                 index={index}
               >
-                {(provided) => (
+                {(provided) => {
+                  return (
                   <div
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
+                    className={`${isGhosting ? "task-ghosting" : ""}`}
                   >
                     <Task
                       key={id}
@@ -69,7 +74,7 @@ function Tasks(props: PropsType) {
                       onToggleSelectTask={onToggleSelectTask}
                     />
                   </div>
-                )}
+                )}}
               </Draggable>
             )
           })}

@@ -3,24 +3,34 @@ import {
   DragDropContext, 
   Draggable, 
   DropResult, 
-  Droppable
+  Droppable,
+  OnBeforeCaptureResponder
 } from 'react-beautiful-dnd'
 
 import Column from './column'
 import { selectTodos, todosOrderUpdated } from '../store/features/todos/todoSlice'
 import { ColumnType } from '../models/models'
-import { reorder } from '../helpers/dnd'
+import { dnd } from '../helpers/dnd'
+import { useState } from 'react'
 
 function Columns() {
   const dispatch = useDispatch()
   const todos = useSelector(selectTodos)
+  const [draggingTaskId, setDraggingTaskId] = useState('');
 
+  const onBeforeCapture: OnBeforeCaptureResponder = (start) => {
+    const draggableId = start.draggableId;
+
+    setDraggingTaskId(draggableId);
+  };
+  
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return
 
-    const items = reorder(todos, result);
+    const items = dnd(todos, result);
 
     dispatch(todosOrderUpdated(items))
+    setDraggingTaskId('')
   }
 
   const renderColumn = (column: ColumnType, index: number) => (
@@ -41,6 +51,7 @@ function Columns() {
           }}
         >
           <Column 
+            draggingTaskId={draggingTaskId}
             {...column} 
             {...provided.dragHandleProps}
           />
@@ -50,7 +61,10 @@ function Columns() {
   )
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext 
+      onDragEnd={onDragEnd}
+      onBeforeCapture={onBeforeCapture}
+    >
       <Droppable
         droppableId='board'
         type='COLUMN'
@@ -67,6 +81,7 @@ function Columns() {
           </div>
         )}
       </Droppable>
+      {!!todos.length && <i>Multi select: Ctrl/Command + Left Click</i>}
     </DragDropContext>
   )
 }

@@ -36,7 +36,7 @@ function ColumnHeader(props: PropsType) {
   }, [tasks])
 
   const handleFilterChange = (value: TaskFilterTypes) => {
-    // When applying filter all tasks became unselected
+    // When applying filter all tasks become unselected
     const removedSelection = tasks.map(task => ({ ...task, isSelected: false }))
     
     onUpdateFilteredTasks(filterTasks(removedSelection, value))

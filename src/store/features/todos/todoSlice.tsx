@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { ColumnType } from '../../../models/models'
+import { ColumnType, TaskType } from '../../../models/models'
 
 type StateType = {
     todos: ColumnType[]
@@ -86,7 +86,7 @@ export const todosSlice = createSlice({
                     ...todo,
                     tasks: todo.tasks.map(task => ({
                         ...task,
-                        isSelected: action.payload.isSelected
+                        isSelected: action.payload.isSelected && action.payload.filteredTasks.some((t: TaskType) => t.id === task.id)
                     }))
                 }
             })

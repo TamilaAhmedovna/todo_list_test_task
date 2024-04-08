@@ -18,7 +18,7 @@ type PropsType = {
   ) => void
   searchValue: string
   onToggleSelectTask: (
-    taskId: string, 
+    taskId: string,
     multiSelect: boolean
   ) => void
 }
@@ -58,7 +58,10 @@ function Task(props: PropsType) {
         {highlightSearch(name, searchValue)}
       </div>
       <div className='task-controls'>
-        <label>
+        <label
+          className='task-completion'
+          onClick={(e) => e.stopPropagation()}
+        >
           <input
             checked={isCompleted}
             type='checkbox'
