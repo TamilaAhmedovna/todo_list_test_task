@@ -33,35 +33,50 @@ const reorderMultiRows = (
 
     if (!sourceColumn || !destinationColumn) return
 
+    const sourceTasks = [...sourceColumn.tasks]
+    const destinationTasks = [...destinationColumn.tasks]
+    const endIndex = destination.index
+    const draggableTasks = sourceTasks.filter(task => task.isSelected)
+
+    // if source and destination are the same
     if (sourceColumn.id === destinationColumn.id) {
+        const markedTasks = sourceTasks.map((
+            t: TaskType & { toBeRemoved?: boolean }
+        ) => 
+            t.isSelected
+                ? {...t, toBeRemoved: true}
+                : t
+        )
+        markedTasks.splice(endIndex, 0, ...draggableTasks)
+        const reorderedTasks = markedTasks.filter(t => !t.toBeRemoved)
         return data.map(column => ({
             ...column,
             tasks: (column.id === sourceColumn.id)
-                ? reorderSingleDrag(sourceColumn.tasks, result)
+                ? reorderedTasks
                 : column.tasks
         }))
     }
 
-    const sourceColumnTasks = sourceColumn?.tasks.filter(task => !task.isSelected)
-    const draggableTasks = sourceColumn?.tasks.filter(task => task.isSelected)
-    const destinationColumnTasks = [...destinationColumn.tasks]
+    const sourceColumnTasksUpdated = sourceTasks.filter(task => !task.isSelected)
 
     if (!draggableTasks?.length) return
 
-    const endIndex = destination.index
-    destinationColumnTasks.splice(endIndex, 0, ...draggableTasks)
+    destinationTasks.splice(endIndex, 0, ...draggableTasks)
 
     return data.map(column => ({
         ...column,
         tasks: (column.id !== source.droppableId && column.id !== destination.droppableId)
             ? column.tasks
             : (column.id === source.droppableId)
-                ? sourceColumnTasks
-                : destinationColumnTasks
+                ? sourceColumnTasksUpdated
+                : destinationTasks
     }))
 }
 
-const reorderSingleRow = (list: ColumnType[], result: DropResult) => {
+const reorderSingleRow = (
+    list: ColumnType[],
+    result: DropResult
+) => {
     const { source, destination } = result
 
     if (!destination) return
@@ -88,8 +103,8 @@ const reorderSingleRow = (list: ColumnType[], result: DropResult) => {
     const sourceColumnTasks = [...sourceColumn.tasks]
     const destinationColumnTasks = [...destinationColumn.tasks]
 
-    const [removed] = sourceColumnTasks.splice(startIndex, 1)
-    destinationColumnTasks.splice(endIndex, 0, removed)
+    const [draggableTask] = sourceColumnTasks.splice(startIndex, 1)
+    destinationColumnTasks.splice(endIndex, 0, draggableTask)
 
     return data.map(column => ({
         ...column,
