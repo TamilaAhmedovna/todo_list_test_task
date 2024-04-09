@@ -12,7 +12,7 @@ import {
   taskDeleted,
   taskSelectionUpdated,
   columnDeleted
-} from '../store/todoSlice'
+} from '../store/columnsSlice'
 import ColumnHeader from './columnHeader/columnHeader'
 
 type PropsType = {

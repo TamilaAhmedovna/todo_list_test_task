@@ -12,7 +12,7 @@ const reorderSingleDrag = (
     const startIndex = source.index
     const endIndex = destination.index
 
-    const data = Array.from(list);
+    const data = Array.from(list)
     const [removed] = data.splice(startIndex, 1)
     data.splice(endIndex, 0, removed)
 
@@ -47,7 +47,11 @@ const reorderMultiRows = (
                 ? {...t, toBeRemoved: true}
                 : t
         )
-        markedTasks.splice(endIndex, 0, ...draggableTasks)
+
+        const index = endIndex > source.index
+            ? endIndex + draggableTasks.length
+            : endIndex
+        markedTasks.splice(index, 0, ...draggableTasks)
         const reorderedTasks = markedTasks.filter(t => !t.toBeRemoved)
         return data.map(column => ({
             ...column,
@@ -81,6 +85,7 @@ const reorderSingleRow = (
 
     if (!destination) return
 
+    console.log(result)
     const data = Array.from(list)
     const sourceColumn = data.find(column => column.id === source.droppableId)
     const destinationColumn = data.find(column => column.id === destination.droppableId)
@@ -89,12 +94,7 @@ const reorderSingleRow = (
 
     // if source and destination are the same
     if (sourceColumn.id === destinationColumn.id) {
-        return data.map(column => ({
-            ...column,
-            tasks: (column.id === sourceColumn.id)
-                ? reorderSingleDrag(sourceColumn.tasks, result)
-                : column.tasks
-        }))
+        return reorderSingleDragInSameColumn(data, sourceColumn.id, sourceColumn.tasks, result)
     }
 
     const startIndex = source.index
@@ -116,10 +116,25 @@ const reorderSingleRow = (
     }))
 }
 
+const reorderSingleDragInSameColumn = (
+    list: ColumnType[], 
+    columnId: string,
+    tasks: TaskType[],
+    result: DropResult
+) => {
+    return list.map(column => ({
+        ...column,
+        tasks: (column.id === columnId)
+            ? reorderSingleDrag(tasks, result)
+            : column.tasks
+    }))
+}
+
 export const dnd = (
     list: ColumnType[],
     result: DropResult
 ) => {
+    // dragging column
     if (result.type === 'COLUMN') {
         return reorderSingleDrag(list, result)
     }
@@ -127,7 +142,8 @@ export const dnd = (
     const column = list.find(item => item.id === result.source.droppableId)
     const draggableItem = column?.tasks.find(item => item.id === result.draggableId)
 
+    // dragging task (multi drag is possible)
     return draggableItem?.isSelected
         ? reorderMultiRows(list, result)
         : reorderSingleRow(list, result)
-};
+}

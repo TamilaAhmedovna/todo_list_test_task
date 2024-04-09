@@ -28,7 +28,7 @@ function EntityCreation(props: PropsType) {
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== 'Enter') return
 
-    handleAddItem();
+    handleAddItem()
   }
 
   return (

@@ -60,7 +60,7 @@ function Tasks(props: PropsType) {
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    className={`${isGhosting ? "task-ghosting" : ""}`}
+                    className={`${isGhosting ? 'task-ghosting' : ''}`}
                   >
                     <Task
                       key={id}

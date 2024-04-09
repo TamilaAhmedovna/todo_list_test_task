@@ -8,7 +8,7 @@ import {
 } from 'react-beautiful-dnd'
 
 import Column from './column'
-import { selectColumns, columnsOrderUpdated } from '../store/todoSlice'
+import { selectColumns, columnsOrderUpdated } from '../store/columnsSlice'
 import { ColumnType } from '../models/models'
 import { dnd } from '../helpers/dnd'
 import { useState } from 'react'
@@ -16,18 +16,18 @@ import { useState } from 'react'
 function Columns() {
   const dispatch = useDispatch()
   const columns = useSelector(selectColumns)
-  const [draggingTaskId, setDraggingTaskId] = useState('');
+  const [draggingTaskId, setDraggingTaskId] = useState('')
 
   const onBeforeCapture: OnBeforeCaptureResponder = (start) => {
-    const draggableId = start.draggableId;
+    const draggableId = start.draggableId
 
-    setDraggingTaskId(draggableId);
-  };
+    setDraggingTaskId(draggableId)
+  }
   
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return
 
-    const items = dnd(columns, result);
+    const items = dnd(columns, result)
 
     dispatch(columnsOrderUpdated(items))
     setDraggingTaskId('')

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from 'react'
 
 export function useOutsideClick(
     ref: any,
@@ -10,10 +10,10 @@ export function useOutsideClick(
             ref.current && 
             !ref.current.contains(target) && 
             onClickOut?.()
-        document.addEventListener('click', onClick);
+        document.addEventListener('click', onClick)
 
-        return () => document.removeEventListener('click', onClick);
-    }, deps);
+        return () => document.removeEventListener('click', onClick)
+    }, deps)
 
     return ref
 }

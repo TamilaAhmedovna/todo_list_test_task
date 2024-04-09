@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import columnsReducer from './todoSlice'
+import columnsReducer from './columnsSlice'
 
 export const store = configureStore({
     reducer: {

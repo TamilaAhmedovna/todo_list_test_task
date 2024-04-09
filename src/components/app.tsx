@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 
 import Columns from './columns'
 import EntityCreation from './entityCreation'
-import { columnCreated } from '../store/todoSlice'
+import { columnCreated } from '../store/columnsSlice'
 
 function App() {
   const dispatch = useDispatch()

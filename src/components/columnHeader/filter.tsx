@@ -21,13 +21,13 @@ function Filter(props: PropsType) {
     disabled,
     onHandleFilterChange
   } = props
-  const ref: any = useRef();
+  const ref: any = useRef()
   const [isFilterMenuShown, setIsFilterMenuShown] = useState<boolean>(false)
   const GetIcon = filter === filterAll ? FunnelIcon : FunnelIconSolid
 
   useOutsideClick(ref, () => {
     setIsFilterMenuShown(false)
-  }, [isFilterMenuShown]);
+  }, [isFilterMenuShown])
 
   return (
     <div
