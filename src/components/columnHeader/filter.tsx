@@ -2,17 +2,13 @@ import { FunnelIcon } from '@heroicons/react/24/outline'
 import { FunnelIcon as FunnelIconSolid } from '@heroicons/react/24/solid'
 import { useRef, useState } from 'react'
 
-import {
-  TaskFilterTypes,
-  filterAll,
-  taskFilters
-} from '../../models/models'
+import { FilterTypes } from '../../models/models'
 import { useOutsideClick } from '../../hooks/useClickOutside'
 
 type PropsType = {
-  filter: TaskFilterTypes
+  filter: FilterTypes
   disabled: boolean
-  onHandleFilterChange: (value: TaskFilterTypes) => void
+  onHandleFilterChange: (value: FilterTypes) => void
 }
 
 function Filter(props: PropsType) {
@@ -23,7 +19,7 @@ function Filter(props: PropsType) {
   } = props
   const ref: any = useRef()
   const [isFilterMenuShown, setIsFilterMenuShown] = useState<boolean>(false)
-  const GetIcon = filter === filterAll ? FunnelIcon : FunnelIconSolid
+  const GetIcon = filter === FilterTypes.All ? FunnelIcon : FunnelIconSolid
 
   useOutsideClick(ref, () => {
     setIsFilterMenuShown(false)
@@ -40,7 +36,7 @@ function Filter(props: PropsType) {
       />
       {isFilterMenuShown &&
         <div className='filter-dropdown'>
-          {taskFilters.map((value) => (
+          {Object.values(FilterTypes).map((value) => (
             <div
               key={value}
               className={`

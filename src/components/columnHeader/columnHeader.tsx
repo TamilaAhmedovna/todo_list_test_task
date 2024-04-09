@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { TaskType } from '../../models/models'
 import {
-  TaskFilterTypes,
-  filterAll,
+  FilterTypes
 } from '../../models/models'
 import { filterTasks } from '../../helpers/filterTasks'
 import Filter from './filter'
@@ -29,13 +28,13 @@ function ColumnHeader(props: PropsType) {
     onSelectAllTasks,
     ...dndProps
   } = props
-  const [filter, setFilter] = useState<TaskFilterTypes>(filterAll)
+  const [filter, setFilter] = useState<FilterTypes>(FilterTypes.All)
 
   useEffect(() => {
         onUpdateFilteredTasks(filterTasks(tasks, filter))
   }, [tasks])
 
-  const handleFilterChange = (value: TaskFilterTypes) => {
+  const handleFilterChange = (value: FilterTypes) => {
     // When applying filter all tasks become unselected
     const removedSelection = tasks.map(task => ({ ...task, isSelected: false }))
     

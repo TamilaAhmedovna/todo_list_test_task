@@ -1,22 +1,19 @@
 import { 
-  TaskFilterTypes, 
+  FilterTypes,
   TaskType, 
-  filterAll, 
-  filterCompleted, 
-  filterNotCompleted 
 } from '../models/models'
 
 export const filterTasks = (
   tasks: TaskType[],
-  filter: TaskFilterTypes
+  filter: FilterTypes
 ) => (
   tasks.filter(task => {
     switch (filter) {
-      case filterAll:
+      case FilterTypes.All:
         return task
-      case filterCompleted:
+      case FilterTypes.Completed:
         return task.isCompleted
-      case filterNotCompleted:
+      case FilterTypes.NotCompleted:
         return !task.isCompleted
     }
   })
