@@ -19,64 +19,6 @@ const reorderSingleDrag = (
     return data
 }
 
-const reorderMultiRows = (
-    list: ColumnType[],
-    result: DropResult
-) => {
-    const { source, destination } = result
-
-    if (!destination) return
-
-    const data = Array.from(list)
-    const sourceColumn = data.find(column => column.id === source.droppableId)
-    const destinationColumn = data.find(column => column.id === destination.droppableId)
-
-    if (!sourceColumn || !destinationColumn) return
-
-    const sourceTasks = [...sourceColumn.tasks]
-    const destinationTasks = [...destinationColumn.tasks]
-    const endIndex = destination.index
-    const draggableTasks = sourceTasks.filter(task => task.isSelected)
-
-    // if source and destination are the same
-    if (sourceColumn.id === destinationColumn.id) {
-        const markedTasks = sourceTasks.map((
-            t: TaskType & { toBeRemoved?: boolean }
-        ) => 
-            t.isSelected
-                ? {...t, toBeRemoved: true}
-                : t
-        )
-
-        const index = endIndex > source.index
-            ? endIndex + draggableTasks.length
-            : endIndex
-        markedTasks.splice(index, 0, ...draggableTasks)
-        const reorderedTasks = markedTasks.filter(t => !t.toBeRemoved)
-        return data.map(column => ({
-            ...column,
-            tasks: (column.id === sourceColumn.id)
-                ? reorderedTasks
-                : column.tasks
-        }))
-    }
-
-    const sourceColumnTasksUpdated = sourceTasks.filter(task => !task.isSelected)
-
-    if (!draggableTasks?.length) return
-
-    destinationTasks.splice(endIndex, 0, ...draggableTasks)
-
-    return data.map(column => ({
-        ...column,
-        tasks: (column.id !== source.droppableId && column.id !== destination.droppableId)
-            ? column.tasks
-            : (column.id === source.droppableId)
-                ? sourceColumnTasksUpdated
-                : destinationTasks
-    }))
-}
-
 const reorderSingleRow = (
     list: ColumnType[],
     result: DropResult
@@ -85,38 +27,18 @@ const reorderSingleRow = (
 
     if (!destination) return
 
-    console.log(result)
-    const data = Array.from(list)
-    const sourceColumn = data.find(column => column.id === source.droppableId)
-    const destinationColumn = data.find(column => column.id === destination.droppableId)
+    const sourceColumn = list.find(column => column.id === source.droppableId)
+    const destinationColumn = list.find(column => column.id === destination.droppableId)
 
     if (!sourceColumn || !destinationColumn) return
 
-    // if source and destination are the same
-    if (sourceColumn.id === destinationColumn.id) {
-        return reorderSingleDragInSameColumn(data, sourceColumn.id, sourceColumn.tasks, result)
-    }
-
-    const startIndex = source.index
-    const endIndex = destination.index
-
-    const sourceColumnTasks = [...sourceColumn.tasks]
-    const destinationColumnTasks = [...destinationColumn.tasks]
-
-    const [draggableTask] = sourceColumnTasks.splice(startIndex, 1)
-    destinationColumnTasks.splice(endIndex, 0, draggableTask)
-
-    return data.map(column => ({
-        ...column,
-        tasks: (column.id !== source.droppableId && column.id !== destination.droppableId)
-            ? column.tasks
-            : (column.id === source.droppableId)
-                ? sourceColumnTasks
-                : destinationColumnTasks
-    }))
+    // check if source and destination are the same columns
+    return sourceColumn.id === destinationColumn.id
+        ? reorderSingleRowInSameColumn(list, sourceColumn.id, sourceColumn.tasks, result)
+        : reorderSingleRowToAnotherColumn(list, [...sourceColumn.tasks], [...destinationColumn.tasks], result)
 }
 
-const reorderSingleDragInSameColumn = (
+const reorderSingleRowInSameColumn = (
     list: ColumnType[], 
     columnId: string,
     tasks: TaskType[],
@@ -127,6 +49,113 @@ const reorderSingleDragInSameColumn = (
         tasks: (column.id === columnId)
             ? reorderSingleDrag(tasks, result)
             : column.tasks
+    }))
+}
+
+const reorderSingleRowToAnotherColumn = (
+    list: ColumnType[],
+    sourceColumnTasks: TaskType[],
+    destinationColumnTasks: TaskType[],
+    result: DropResult
+) => {
+    const { source, destination } = result
+    
+    if (!destination) return
+    
+    const startIndex = source.index
+    const endIndex = destination.index
+
+    const [draggableTask] = sourceColumnTasks.splice(startIndex, 1)
+    destinationColumnTasks.splice(endIndex, 0, draggableTask)
+
+    return list.map(column => ({
+        ...column,
+        tasks: (column.id !== source.droppableId && column.id !== destination.droppableId)
+            ? column.tasks
+            : (column.id === source.droppableId)
+                ? sourceColumnTasks
+                : destinationColumnTasks
+    }))
+}
+
+const reorderMultiRows = (
+    list: ColumnType[],
+    result: DropResult
+) => {
+    const { source, destination } = result
+
+    if (!destination) return
+
+    const sourceColumn = list.find(column => column.id === source.droppableId)
+    const destinationColumn = list.find(column => column.id === destination.droppableId)
+
+    if (!sourceColumn || !destinationColumn) return
+
+    const draggableTasks = [...sourceColumn.tasks].filter(task => task.isSelected)
+
+    // check if source and destination are the same columns
+    return sourceColumn.id === destinationColumn.id
+        ? reorderMultiRowsInSameColumn(list, sourceColumn, draggableTasks, result)
+        : reorderMultiRowsToAnotherColumn(list, sourceColumn, destinationColumn, draggableTasks, result)
+}
+
+const reorderMultiRowsInSameColumn = (
+    list: ColumnType[],
+    sourceColumn: ColumnType,
+    draggableTasks: TaskType[],
+    result: DropResult
+) => {
+    const { source, destination } = result
+    
+    if (!destination) return
+    
+    const markedTasks = sourceColumn.tasks.map((
+        t: TaskType & { toBeRemoved?: boolean }
+    ) => 
+        t.isSelected
+            ? {...t, toBeRemoved: true}
+            : t
+    )
+
+    const endIndex = destination.index > source.index
+        ? destination.index + draggableTasks.length
+        : destination.index
+    markedTasks.splice(endIndex, 0, ...draggableTasks)
+    const reorderedTasks = markedTasks.filter(t => !t.toBeRemoved)
+    return list.map(column => ({
+        ...column,
+        tasks: (column.id === sourceColumn.id)
+            ? reorderedTasks
+            : column.tasks
+    }))
+}
+
+const reorderMultiRowsToAnotherColumn = (
+    list: ColumnType[],
+    sourceColumn: ColumnType,
+    destinationColumn: ColumnType,
+    draggableTasks: TaskType[],
+    result: DropResult
+) => {
+    const { source, destination } = result
+    
+    if (!destination) return
+
+    const endIndex = destination.index
+    const destinationTasks = [...destinationColumn.tasks]
+    const sourceColumnTasksUpdated = sourceColumn.tasks.filter(task => !task.isSelected)
+
+    if (!draggableTasks?.length) return
+
+    destinationTasks.splice(endIndex, 0, ...draggableTasks)
+
+    return list.map(column => ({
+        ...column,
+        tasks: (column.id !== source.droppableId && column.id !== destination.droppableId)
+            ? column.tasks
+            : (column.id === source.droppableId)
+                ? sourceColumnTasksUpdated
+                : destinationTasks
     }))
 }
 
