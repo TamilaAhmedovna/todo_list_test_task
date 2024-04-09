@@ -11,9 +11,9 @@ import {
   taskCreated,
   taskDeleted,
   taskSelectionUpdated,
-  todoDeleted
-} from '../store/features/todos/todoSlice'
-import ColumnHeader from './columnHeader'
+  columnDeleted
+} from '../store/todoSlice'
+import ColumnHeader from './columnHeader/columnHeader'
 
 type PropsType = {
   id: string
@@ -31,7 +31,7 @@ function Column(props: PropsType) {
     && !!filteredTasks.length
 
   const handleRemoveColumn = () => {
-    dispatch(todoDeleted(id))
+    dispatch(columnDeleted(id))
   }
 
   const addTask = (name: string) => {

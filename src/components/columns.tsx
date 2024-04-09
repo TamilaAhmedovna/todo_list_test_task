@@ -8,14 +8,14 @@ import {
 } from 'react-beautiful-dnd'
 
 import Column from './column'
-import { selectTodos, todosOrderUpdated } from '../store/features/todos/todoSlice'
+import { selectColumns, columnsOrderUpdated } from '../store/todoSlice'
 import { ColumnType } from '../models/models'
 import { dnd } from '../helpers/dnd'
 import { useState } from 'react'
 
 function Columns() {
   const dispatch = useDispatch()
-  const todos = useSelector(selectTodos)
+  const columns = useSelector(selectColumns)
   const [draggingTaskId, setDraggingTaskId] = useState('');
 
   const onBeforeCapture: OnBeforeCaptureResponder = (start) => {
@@ -27,9 +27,9 @@ function Columns() {
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return
 
-    const items = dnd(todos, result);
+    const items = dnd(columns, result);
 
-    dispatch(todosOrderUpdated(items))
+    dispatch(columnsOrderUpdated(items))
     setDraggingTaskId('')
   }
 
@@ -76,12 +76,12 @@ function Columns() {
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
-            {todos.map((column, index) => renderColumn(column, index))}
+            {columns.map((column, index) => renderColumn(column, index))}
             {provided.placeholder}
           </div>
         )}
       </Droppable>
-      {!!todos.length && <i>Multi select: Ctrl/Command + Left Click</i>}
+      {!!columns.length && <i>Multi select: Ctrl/Command + Left Click</i>}
     </DragDropContext>
   )
 }

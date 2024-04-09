@@ -1,41 +1,41 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { ColumnType, TaskType } from '../../../models/models'
+import { ColumnType, TaskType } from '../models/models'
 
 type StateType = {
-    todos: ColumnType[]
+    columns: ColumnType[]
 }
 
 const initialState: ColumnType[] = []
 
-export const todosSlice = createSlice({
-    name: 'todos',
+export const columnsSlice = createSlice({
+    name: 'columns',
     initialState,
     reducers: {
-        todoCreated: (state, action) => {
+        columnCreated: (state, action) => {
             state.push(action.payload)
         },
-        todoDeleted: (state, action) => {
-            return state.filter(todo => (todo.id !== action.payload))
+        columnDeleted: (state, action) => {
+            return state.filter(column => (column.id !== action.payload))
         },
-        todosOrderUpdated: (_state, action) => {
+        columnsOrderUpdated: (_state, action) => {
             return action.payload
         },
         taskCreated: (state, action) => {
-            state.map(todo => {
-                if (todo.id === action.payload.columnId) {
-                    todo.tasks.push(action.payload.task)
+            state.map(column => {
+                if (column.id === action.payload.columnId) {
+                    column.tasks.push(action.payload.task)
                 } else {
-                    return todo
+                    return column
                 }
             })
         },
         taskDeleted: (state, action) => {
-            return state.map(todo => {
-                if (todo.id !== action.payload.columnId) return todo
+            return state.map(column => {
+                if (column.id !== action.payload.columnId) return column
 
                 return {
-                    ...todo,
-                    tasks: todo.tasks.filter(task => 
+                    ...column,
+                    tasks: column.tasks.filter(task => 
                         action.payload.isSelected
                             ? !task.isSelected 
                             : task.id !== action.payload.taskId
@@ -44,12 +44,12 @@ export const todosSlice = createSlice({
             })
         },
         taskCompleteUpdated: (state, action) => {
-            return state.map(todo => {
-                if (todo.id !== action.payload.columnId) return todo
+            return state.map(column => {
+                if (column.id !== action.payload.columnId) return column
 
                 return {
-                    ...todo,
-                    tasks: todo.tasks.map(task =>
+                    ...column,
+                    tasks: column.tasks.map(task =>
                         action.payload.isSelected
                             ? task.isSelected
                                 ? { ...task, isCompleted: action.payload.isCompleted }
@@ -62,12 +62,12 @@ export const todosSlice = createSlice({
             })
         },
         taskSelectionUpdated: (state, action) => {
-            return state.map(todo => {
-                if (todo.id !== action.payload.columnId) return todo
+            return state.map(column => {
+                if (column.id !== action.payload.columnId) return column
 
                 return {
-                    ...todo,
-                    tasks: todo.tasks.map(task => {
+                    ...column,
+                    tasks: column.tasks.map(task => {
                         return {
                             ...task,
                             isSelected: (task.id === action.payload.taskId)
@@ -79,12 +79,12 @@ export const todosSlice = createSlice({
             })
         },
         allTasksSelected: (state, action) => {
-            return state.map(todo => {
-                if (todo.id !== action.payload.columnId) return todo
+            return state.map(column => {
+                if (column.id !== action.payload.columnId) return column
 
                 return {
-                    ...todo,
-                    tasks: todo.tasks.map(task => ({
+                    ...column,
+                    tasks: column.tasks.map(task => ({
                         ...task,
                         isSelected: action.payload.isSelected && action.payload.filteredTasks.some((t: TaskType) => t.id === task.id)
                     }))
@@ -96,17 +96,17 @@ export const todosSlice = createSlice({
 
 // export actions for state updating
 export const {
-    todoCreated,
-    todoDeleted,
-    todosOrderUpdated,
+    columnCreated,
+    columnDeleted,
+    columnsOrderUpdated,
     taskCreated,
     taskDeleted,
     taskSelectionUpdated,
     allTasksSelected,
     taskCompleteUpdated
-} = todosSlice.actions
+} = columnsSlice.actions
 
 // export state items to use
-export const selectTodos = (state: StateType) => state.todos
+export const selectColumns = (state: StateType) => state.columns
 
-export default todosSlice.reducer
+export default columnsSlice.reducer

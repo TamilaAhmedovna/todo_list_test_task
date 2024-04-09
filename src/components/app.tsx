@@ -3,14 +3,14 @@ import { useDispatch } from 'react-redux'
 
 import Columns from './columns'
 import EntityCreation from './entityCreation'
-import { todoCreated } from '../store/features/todos/todoSlice'
+import { columnCreated } from '../store/todoSlice'
 
 function App() {
   const dispatch = useDispatch()
 
-  const addTodo = (name: string) => {
-    dispatch(todoCreated({
-      id: lodash.uniqueId('todo-'),
+  const addColumn = (name: string) => {
+    dispatch(columnCreated({
+      id: lodash.uniqueId('column-'),
       name,
       tasks: []
     }))
@@ -20,7 +20,7 @@ function App() {
     <div>
       <EntityCreation
         buttonName='Add Todo'
-        onAddItem={addTodo}
+        onAddItem={addColumn}
       />
       <Columns />
     </div>

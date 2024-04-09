@@ -6,8 +6,8 @@ import {
   TaskFilterTypes,
   filterAll,
   taskFilters
-} from '../models/models'
-import { useOutsideClick } from '../hooks/useClickOutside'
+} from '../../models/models'
+import { useOutsideClick } from '../../hooks/useClickOutside'
 
 type PropsType = {
   filter: TaskFilterTypes

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 
-import { TaskType } from '../models/models'
+import { TaskType } from '../../models/models'
 import {
   TaskFilterTypes,
   filterAll,
-} from '../models/models'
-import { filterTasks } from '../helpers/filterTasks'
+} from '../../models/models'
+import { filterTasks } from '../../helpers/filterTasks'
 import Filter from './filter'
 import ColumnProps from './columnProps'
 import SelectAll from './selectAll'
